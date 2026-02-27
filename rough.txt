@@ -207,3 +207,11 @@ Set up and ship your existing monorepo skeleton so anyone can access a live URL 
 - Branching default: `develop -> staging`, `main -> production`.
 - Health probe default: `GET /health`.
 - Release identity default: `APP_VERSION` injected from commit SHA or Git tag.
+
+----------------------------
+NEON 
+
+npx neonctl@latest --force-auth init --agent cursor
+
+postgresql://neondb_owner:npg_gNV2pIhq9mOf@ep-fragrant-cake-ai07dxbu-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+

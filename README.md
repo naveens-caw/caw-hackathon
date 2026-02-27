@@ -58,3 +58,4 @@ Health and smoke endpoints:
 Runbook and setup details:
 
 - `docs/deployment.md`
+- `docs/production-launch-checklist.md`

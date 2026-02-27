@@ -9,22 +9,33 @@ Deploy `apps/web` and `apps/api` with isolated `staging` and `production` enviro
 - API health endpoint: `GET /health`
 - API version endpoint: `GET /api/version`
 
-## One-time setup
+## One-time setup (production-first)
 
-1. Create Neon project and two databases/branches:
+For fastest launch, complete production first, then add staging.
 
-- `staging`
+1. Create Neon project and production database/branch:
+
 - `production`
 
-2. Create two Render API services (or one service per env) and capture deploy hooks:
+Optional later:
 
-- staging deploy hook URL
+- `staging`
+
+2. Create Render API production service and capture deploy hook:
+
 - production deploy hook URL
 
-3. Create two Vercel projects for `apps/web`:
+Optional later:
+
+- staging deploy hook URL
+
+3. Create Vercel production project for `apps/web`:
+
+- production web project
+
+Optional later:
 
 - staging web project
-- production web project
 
 4. In each Vercel project, set `VITE_API_URL` to the matching API URL.
 5. In GitHub repository settings, create environments:
@@ -34,7 +45,7 @@ Deploy `apps/web` and `apps/api` with isolated `staging` and `production` enviro
 
 ## GitHub environment secrets
 
-Set these secrets in both environments (`staging` and `production`) with environment-specific values:
+Set these secrets in `production` first. Add `staging` values later when enabling staging:
 
 - `WEB_URL`: public URL of deployed web app
 - `API_URL`: public URL of deployed API
@@ -45,9 +56,10 @@ Set these secrets in both environments (`staging` and `production`) with environ
 
 ## Render env vars
 
-Set these per Render service:
+Set these on Render production service:
 
 - `NODE_ENV=production`
+- `APP_ENV=production`
 - `APP_VERSION` (optional default; workflow/commit can override later)
 - `DATABASE_URL` (Neon staging/prod URL)
 
@@ -55,8 +67,8 @@ Render provides `PORT` automatically. API bootstrap supports this for runtime bi
 
 ## Branch and workflow behavior
 
-- `develop` -> `Deploy Staging` (after `CI` succeeds)
 - `main` -> `Deploy Production` (after `CI` succeeds + production environment protection rules)
+- `develop` -> `Deploy Staging` (optional follow-up when staging is enabled)
 
 CI checks live in `.github/workflows/ci.yml` and must pass before deploy workflows run.
 
@@ -94,3 +106,9 @@ If any smoke check fails, deployment workflow fails.
 - Point production domain (for example `app.<domain>`) to production Vercel project.
 - Point API domains similarly to matching Render services.
 - Never share staging/prod DB URLs or deploy hooks across environments.
+
+## Launch checklist
+
+Use this file while filling real values from dashboards:
+
+- `docs/production-launch-checklist.md`

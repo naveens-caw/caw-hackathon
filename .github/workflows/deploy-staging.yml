@@ -25,6 +25,15 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
+      - name: Validate required secrets
+        run: |
+          test -n "$WEB_URL"
+          test -n "$API_URL"
+          test -n "$RENDER_DEPLOY_HOOK_URL"
+          test -n "$VERCEL_TOKEN"
+          test -n "$VERCEL_ORG_ID"
+          test -n "$VERCEL_PROJECT_ID"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -49,9 +58,9 @@ jobs:
 
       - name: Deploy Web (Vercel)
         run: |
-          pnpm dlx vercel pull --yes --environment=production --cwd apps/web --token="$VERCEL_TOKEN"
-          pnpm dlx vercel build --prod --cwd apps/web --token="$VERCEL_TOKEN"
-          pnpm dlx vercel deploy --prebuilt --prod --cwd apps/web --token="$VERCEL_TOKEN"
+          pnpm dlx vercel pull --yes --environment=preview --cwd apps/web --token="$VERCEL_TOKEN"
+          pnpm dlx vercel build --cwd apps/web --token="$VERCEL_TOKEN"
+          pnpm dlx vercel deploy --prebuilt --cwd apps/web --token="$VERCEL_TOKEN"
 
       - name: Wait for API health
         run: |
@@ -77,3 +86,8 @@ jobs:
         run: |
           curl -fsS "$API_URL/api/version" \
             | node -e "const data = JSON.parse(require('fs').readFileSync(0, 'utf8')); if (!data.version || !data.env) process.exit(1);"
+
+      - name: Smoke check staging env
+        run: |
+          curl -fsS "$API_URL/api/version" \
+            | node -e "const data = JSON.parse(require('fs').readFileSync(0, 'utf8')); if (data.env !== 'staging') process.exit(1);"
