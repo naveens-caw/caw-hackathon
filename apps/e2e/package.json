@@ -1,0 +1,21 @@
+{
+  "name": "e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"no build for e2e\"",
+    "dev": "echo \"no dev for e2e\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"skip e2e in unit test pipeline\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@caw-hackathon/eslint-config": "workspace:*",
+    "@caw-hackathon/tsconfig": "workspace:*",
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.9.1",
+    "typescript": "^5.9.3"
+  }
+}

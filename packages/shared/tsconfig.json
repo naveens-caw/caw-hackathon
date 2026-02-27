@@ -1,0 +1,15 @@
+{
+  "extends": "@caw-hackathon/tsconfig/node.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*.ts"]
+}

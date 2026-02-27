@@ -1,0 +1,42 @@
+{
+  "name": "@caw-hackathon/monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hackathon monorepo scaffold",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --filter=web --filter=api",
+    "lint": "turbo run lint",
+    "format": "prettier --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "db:generate": "pnpm --filter @caw-hackathon/db drizzle:generate",
+    "db:migrate": "pnpm --filter @caw-hackathon/db drizzle:migrate",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@caw-hackathon/eslint-config": "workspace:*",
+    "eslint": "^9.39.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "playwright": "^1.55.0",
+    "prettier": "^3.8.1",
+    "turbo": "^2.8.3",
+    "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "pnpm typecheck"
+    ],
+    "*.{json,md,yaml,yml,css}": [
+      "prettier --write"
+    ]
+  }
+}

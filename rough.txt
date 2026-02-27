@@ -1,0 +1,113 @@
+## Feature: Hackathon Monorepo Bootstrap (Atlas-style)
+
+### What
+Bootstrap a new hackathon project inside a **`caw-hackathon/`** folder using the **same tech stack and conventions as the Atlas repo**, but reduced to the essential scaffolding so I can start building features quickly. This includes a **Turborepo + pnpm** monorepo with a **React + TypeScript (Vite)** frontend and a **NestJS + TypeScript** backend, plus baseline developer tooling (lint/format/typecheck/test), **PostgreSQL + Drizzle ORM**, **Docker compose**, a **CI/CD pipeline skeleton**, and a clean **.env structure**. **Do not modify Atlas**—only use it as a reference for structure/config patterns.
+
+### Technical Approach
+- **Create folder structure (new project only)**
+  - Create a new root folder: `caw-hackathon/`
+  - Monorepo layout (minimal but extensible):
+    - `apps/web` (React + TS + Vite)
+    - `apps/api` (NestJS)
+    - `packages/shared` (shared types/utils; includes Zod schemas)
+    - `packages/db` (Drizzle schema + migrations + DB client)
+    - `tooling/eslint-config` (shared ESLint config)
+    - `tooling/tsconfig` (shared TS configs)
+
+- **Monorepo orchestration**
+  - Setup **Turborepo** (`turbo.json`) with pipelines for: `dev`, `build`, `lint`, `typecheck`, `test`
+  - Setup **pnpm workspaces** (`pnpm-workspace.yaml`) and root `package.json` scripts to run tasks across apps
+
+- **TypeScript (strict)**
+  - Root TS configs: `tooling/tsconfig/base.json`, plus app-specific `tsconfig.json` extending shared base
+  - Ensure `strict: true` and consistent path aliases (as per Atlas style)
+
+- **Frontend**
+  - `apps/web`: Vite + React + TS
+  - Add: React Router v7, TanStack Query, Zustand, Tailwind, shadcn/ui, React Hook Form + Zod
+  - Provide minimal example wiring:
+    - Router setup with one route
+    - TanStack Query provider
+    - Example form using RHF + Zod
+
+- **Backend**
+  - `apps/api`: NestJS starter with:
+    - Health endpoint (`GET /health`)
+    - Config module reading env vars
+    - DB module using `packages/db`
+    - Example endpoint (`GET /api/version`) returning version + env
+
+- **Database + ORM**
+  - Postgres via Docker compose service
+  - Drizzle setup in `packages/db`:
+    - `schema.ts` (initial example table)
+    - `drizzle.config.ts`
+    - migration scripts
+    - `index.ts` exporting typed client
+
+- **Linting + formatting**
+  - Shared ESLint config package in `tooling/eslint-config`
+  - Prettier config at root
+  - Ensure both apps and packages inherit the same rules
+
+- **Testing scaffolding**
+  - Backend: Jest (Nest default)
+  - Frontend/packages: Vitest
+  - E2E: Playwright (basic config and placeholder test)
+
+- **Git hooks**
+  - Husky + lint-staged to run format/lint/typecheck on staged files
+
+- **Docker**
+  - Root `docker-compose.yml` for Postgres (and optional app services as placeholders)
+  - Optional `Dockerfile` skeletons for `apps/web` and `apps/api` (even if not fully used yet)
+
+- **CI/CD skeleton**
+  - Add a pipeline skeleton (e.g., GitHub Actions) with jobs:
+    - install (pnpm)
+    - lint
+    - typecheck
+    - test
+    - build
+
+- **Environment configuration**
+  - Root `.env.example` plus per-app examples if needed
+  - Define consistent env keys (DB URL, API port, web port, etc.)
+  - Ensure backend loads env and validates via Zod (Atlas-style pattern)
+
+### Acceptance Criteria
+- [ ] A new folder `caw-hackathon/` exists and is fully independent; **Atlas is unchanged**
+- [ ] From repo root, `pnpm i` installs successfully with pnpm workspaces
+- [ ] `pnpm dev` starts both apps (web + api) via Turborepo
+- [ ] `pnpm lint` runs ESLint across apps/packages with shared config
+- [ ] `pnpm format` (or equivalent) runs Prettier consistently
+- [ ] `pnpm typecheck` runs TypeScript checks across the monorepo (strict mode)
+- [ ] Postgres starts with `docker compose up -d` and the backend can connect using env vars
+- [ ] Drizzle migration workflow exists (generate/run) and includes an example schema/table
+- [ ] API exposes `GET /health` returning 200 OK
+- [ ] Web app loads and can call the API base URL (even if just a sample fetch)
+- [ ] Test runners are wired:
+  - [ ] `pnpm test` runs Jest for API and Vitest for web/shared
+  - [ ] Playwright config exists with a placeholder e2e test
+- [ ] Husky + lint-staged run on commit (at least lint + format + typecheck on staged files)
+- [ ] CI pipeline skeleton exists and runs lint/typecheck/test/build on PR
+
+### Out of Scope
+- Building hackathon feature/business logic beyond the bootstrap (no real product screens)
+- Full auth, RBAC, permissions, SSO
+- Production-grade deployment (K8s, Terraform, secrets manager)
+- Advanced DB modeling (beyond an example table + migration flow)
+- Observability stack (tracing, metrics, log aggregation) beyond placeholders
+- Modifying the Atlas repo or refactoring Atlas configs
+
+### Implementation Order
+1. Create `caw-hackathon/` root with `pnpm-workspace.yaml`, root `package.json`, and `turbo.json`
+2. Add shared tooling packages: `tooling/tsconfig`, `tooling/eslint-config`, root Prettier config
+3. Scaffold `apps/web` (Vite React TS) and `apps/api` (NestJS) with strict TS configs
+4. Add `packages/shared` (Zod schemas/types) and wire it into both apps
+5. Add `packages/db` with Drizzle schema/config + scripts; add Postgres in `docker-compose.yml`
+6. Wire backend DB module + add `/health` endpoint; ensure env loading works
+7. Add lint/typecheck scripts and ensure Turborepo pipelines work end-to-end
+8. Add testing scaffolds: Jest (api), Vitest (web/shared), Playwright (e2e)
+9. Add Husky + lint-staged pre-commit hooks
+10. Add CI/CD pipeline skeleton to run install/lint/typecheck/test/build
