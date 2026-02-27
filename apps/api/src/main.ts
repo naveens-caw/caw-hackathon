@@ -9,7 +9,8 @@ const bootstrap = async (): Promise<void> => {
   app.enableCors();
 
   const config = app.get(ConfigService<AppEnv, true>);
-  const port = config.get('API_PORT', { infer: true });
+  const fallbackPort = config.get('API_PORT', { infer: true });
+  const port = Number(process.env.PORT ?? fallbackPort);
 
   await app.listen(port);
   console.log(`API listening on http://localhost:${port}`);

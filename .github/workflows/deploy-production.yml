@@ -1,0 +1,79 @@
+name: Deploy Production
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    env:
+      WEB_URL: ${{ secrets.WEB_URL }}
+      API_URL: ${{ secrets.API_URL }}
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy API (Render)
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
+
+      - name: Deploy Web (Vercel)
+        run: |
+          pnpm dlx vercel pull --yes --environment=production --cwd apps/web --token="$VERCEL_TOKEN"
+          pnpm dlx vercel build --prod --cwd apps/web --token="$VERCEL_TOKEN"
+          pnpm dlx vercel deploy --prebuilt --prod --cwd apps/web --token="$VERCEL_TOKEN"
+
+      - name: Wait for API health
+        run: |
+          for i in {1..30}; do
+            if curl -fsS "$API_URL/health" >/dev/null; then
+              exit 0
+            fi
+            echo "API not healthy yet (attempt $i/30)"
+            sleep 10
+          done
+          echo "API did not become healthy in time"
+          exit 1
+
+      - name: Smoke check web URL
+        run: curl -fsS "$WEB_URL" >/dev/null
+
+      - name: Smoke check API health payload
+        run: |
+          curl -fsS "$API_URL/health" \
+            | node -e "const data = JSON.parse(require('fs').readFileSync(0, 'utf8')); if (data.ok !== true) process.exit(1);"
+
+      - name: Smoke check API version payload
+        run: |
+          curl -fsS "$API_URL/api/version" \
+            | node -e "const data = JSON.parse(require('fs').readFileSync(0, 'utf8')); if (!data.version || !data.env) process.exit(1);"

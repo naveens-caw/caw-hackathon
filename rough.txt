@@ -111,3 +111,99 @@ Bootstrap a new hackathon project inside a **`caw-hackathon/`** folder using the
 8. Add testing scaffolds: Jest (api), Vitest (web/shared), Playwright (e2e)
 9. Add Husky + lint-staged pre-commit hooks
 10. Add CI/CD pipeline skeleton to run install/lint/typecheck/test/build
+
+
+-------------------------------------------
+
+STEP 2 
+
+## Feature: Deployment Foundation (Staging + Production)
+
+### What
+Set up and ship your existing monorepo skeleton so anyone can access a live URL (not just localhost), with separate staging and production environments. Users should be able to open the web app, the web app should call the deployed API, and both environments should expose a health check proving the system is up.
+
+### Technical Approach
+- **What files need to be created/modified**
+- Create `apps/web/vercel.json` to define build output, rewrites (if needed), and environment expectations.
+- Create `apps/api/render.yaml` (or equivalent service manifest) to define API service build/start commands and health check path.
+- Create `docs/deployment.md` with one-time setup, env var mapping, DNS/domain notes, and rollback steps.
+- Create `.github/workflows/deploy-staging.yml` for auto-deploy from `develop` (or selected staging branch).
+- Create `.github/workflows/deploy-production.yml` for deploy from `main` with protected environment approval.
+- Modify root `README.md` to add live environment URLs, health endpoints, and deployment runbook links.
+- Modify `.env.example` to include explicit staging/production variable names and expected values.
+- Modify `.github/workflows/ci.yml` to gate deployment workflows on passing checks.
+
+- **What APIs/endpoints are involved**
+- Existing `GET /health` on API remains primary liveness endpoint and must return HTTP `200` with `{ "ok": true }`.
+- Existing `GET /api/version` remains smoke-test endpoint and must return app version + env.
+- Web runtime must use `VITE_API_URL` in both staging and production to call deployed API origin.
+- Add deployment smoke validation script/step that checks:
+- `web_url` returns `200`.
+- `api_url/health` returns `200`.
+- `api_url/api/version` returns a valid JSON payload.
+
+- **What the data model looks like**
+- No schema changes for app data in this step.
+- Environment model becomes explicit per environment:
+- `NODE_ENV=production`
+- `API_PORT` (Render-managed or fixed if required)
+- `VITE_API_URL`
+- `APP_VERSION` (from CI commit/tag)
+- `DATABASE_URL` (Neon branch DB URL per env)
+- Use two isolated DB branches/databases in Neon: one for staging and one for production.
+
+- **What external dependencies are needed**
+- Vercel project for `apps/web`.
+- Render Web Service for `apps/api`.
+- Neon Postgres project with separate staging/prod DB branches.
+- GitHub Environments: `staging` and `production` with scoped secrets.
+- Optional uptime monitor (Render/Vercel built-in or external) targeting `/health`.
+
+### Acceptance Criteria
+- [ ] Staging web URL is live and loads without manual local setup.
+- [ ] Production web URL is live and loads without manual local setup.
+- [ ] Staging API `GET /health` returns `200` and `{ "ok": true }`.
+- [ ] Production API `GET /health` returns `200` and `{ "ok": true }`.
+- [ ] Staging and production each return correct environment identity from `GET /api/version`.
+- [ ] Web in each environment uses the correct `VITE_API_URL` and reaches only its matching API.
+- [ ] Staging deploy runs automatically on staging branch pushes after CI passes.
+- [ ] Production deploy runs only from `main` and requires protected approval.
+- [ ] Environment secrets are separated (`staging` secrets cannot deploy to `production`).
+- [ ] Deployment smoke tests fail the pipeline if web/API health checks fail.
+
+### Out of Scope
+- Full IaC/Terraform modules.
+- Kubernetes/ECS/Cloud Run migration.
+- Full observability platform (tracing, dashboards, alert routing).
+- Auth, RBAC, or business feature delivery.
+- Multi-region failover or advanced autoscaling tuning.
+
+### Implementation Order
+1. Define environment contract (`.env.example`, secret naming, staging/prod variable matrix) and create Neon staging/prod DBs.
+2. Deploy API skeleton to Render with `DATABASE_URL`, `NODE_ENV`, `APP_VERSION`; verify `/health` and `/api/version`.
+3. Deploy web skeleton to Vercel with correct `VITE_API_URL` for staging/prod.
+4. Add GitHub Environments and deployment workflows (`deploy-staging.yml`, `deploy-production.yml`) with CI gating.
+5. Add smoke checks in deploy jobs for web root, `/health`, and `/api/version`.
+6. Document runbook in `docs/deployment.md` and update `README.md` with live URLs + rollback steps.
+7. Run final end-to-end validation: staging deploy, production deploy, environment isolation, and rollback rehearsal.
+
+### Test Cases and Scenarios
+- Staging push triggers staging deployment and passes smoke checks.
+- Main push with approval triggers production deployment and passes smoke checks.
+- Wrong/missing `VITE_API_URL` causes smoke check failure (web cannot reach API).
+- Wrong `DATABASE_URL` causes API health/version failure and blocks promotion.
+- Manual rollback to previous deployment restores healthy `/health` within target recovery window.
+
+### Important Public Interfaces/Types
+- API contract stays stable:
+- `GET /health -> 200 { ok: true }`
+- `GET /api/version -> version + environment payload`
+- Frontend runtime interface depends on `VITE_API_URL`; this is now a required deploy-time contract.
+- CI/CD interface adds two protected deployment workflows bound to GitHub Environments.
+
+### Assumptions and Defaults Chosen
+- Platform default: `Vercel` for web and `Render` for API.
+- Database default: `Neon` with separate staging and production DB branches.
+- Branching default: `develop -> staging`, `main -> production`.
+- Health probe default: `GET /health`.
+- Release identity default: `APP_VERSION` injected from commit SHA or Git tag.
