@@ -28,15 +28,5 @@
     "prettier": "^3.8.1",
     "turbo": "^2.8.3",
     "typescript": "^5.9.3"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write",
-      "pnpm typecheck"
-    ],
-    "*.{json,md,yaml,yml,css}": [
-      "prettier --write"
-    ]
   }
 }
