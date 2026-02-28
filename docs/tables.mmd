@@ -1,0 +1,56 @@
+erDiagram
+  USERS {
+    text id PK
+    text clerk_user_id UK
+    text email UK
+    text full_name
+    enum app_role
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  JOBS {
+    int id PK
+    text title
+    text description
+    text department
+    text location
+    enum employment_type
+    enum job_status
+    text posted_by_user_id FK
+    text hiring_manager_user_id FK
+    timestamptz opened_at
+    timestamptz closed_at
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  APPLICATIONS {
+    int id PK
+    int job_id FK
+    text applicant_user_id FK
+    text resume_url
+    text cover_letter
+    enum application_stage
+    enum decision_status
+    timestamptz applied_at
+    timestamptz updated_at
+  }
+
+  APPLICATION_STAGE_EVENTS {
+    int id PK
+    int application_id FK
+    enum from_stage
+    enum to_stage
+    text changed_by_user_id FK
+    text note
+    timestamptz created_at
+  }
+
+  USERS ||--o{ JOBS : posts
+  USERS ||--o{ JOBS : manages
+  USERS ||--o{ APPLICATIONS : submits
+  USERS ||--o{ APPLICATION_STAGE_EVENTS : changes
+  JOBS ||--o{ APPLICATIONS : receives
+  APPLICATIONS ||--o{ APPLICATION_STAGE_EVENTS : has
+
