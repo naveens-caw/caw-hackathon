@@ -11,7 +11,7 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 
-export const appRoleEnum = pgEnum('app_role', ['unassigned', 'employee', 'manager', 'hr']);
+export const appRoleEnum = pgEnum('app_role', ['employee', 'manager', 'hr']);
 export const employmentTypeEnum = pgEnum('employment_type', [
   'full_time',
   'part_time',
@@ -32,7 +32,7 @@ export const users = pgTable('users', {
   clerkUserId: text('clerk_user_id').notNull().unique(),
   email: text('email').notNull().unique(),
   fullName: text('full_name'),
-  role: appRoleEnum('role').notNull().default('unassigned'),
+  role: appRoleEnum('role').notNull().default('employee'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

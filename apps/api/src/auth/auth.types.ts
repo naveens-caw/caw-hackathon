@@ -1,6 +1,6 @@
 import type { AppRole } from '@caw-hackathon/shared';
 
-export type AuthStatus = 'active' | 'pending_role';
+export type AuthStatus = 'active';
 
 export interface AuthenticatedUser {
   id: string;

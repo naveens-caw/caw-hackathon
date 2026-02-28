@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const appRoleSchema = z.enum(['unassigned', 'employee', 'manager', 'hr']);
+export const appRoleSchema = z.enum(['employee', 'manager', 'hr']);
 export const employmentTypeSchema = z.enum(['full_time', 'part_time', 'contract', 'internship']);
 export const jobStatusSchema = z.enum(['draft', 'open', 'closed']);
 export const applicationStageSchema = z.enum(['applied', 'screening', 'interview', 'decision']);
@@ -18,7 +18,7 @@ export const meResponseSchema = z.object({
   email: z.string().email(),
   fullName: z.string().nullable(),
   role: appRoleSchema,
-  status: z.enum(['active', 'pending_role']),
+  status: z.enum(['active']),
 });
 
 export const jobSchema = z.object({

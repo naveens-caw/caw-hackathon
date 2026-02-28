@@ -5,9 +5,7 @@ import { eq } from 'drizzle-orm';
 const [clerkUserId, roleInput] = process.argv.slice(2);
 
 if (!clerkUserId || !roleInput) {
-  console.error(
-    'Usage: pnpm --filter api assign-role <clerkUserId> <unassigned|employee|manager|hr>',
-  );
+  console.error('Usage: pnpm --filter api assign-role <clerkUserId> <employee|manager|hr>');
   process.exit(1);
 }
 

@@ -31,7 +31,7 @@ export const JobDetailsPage = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch authenticated user');
       }
-      return (await response.json()) as { role: 'unassigned' | 'employee' | 'manager' | 'hr' };
+      return (await response.json()) as { role: 'employee' | 'manager' | 'hr' };
     },
   });
 

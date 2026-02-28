@@ -9,7 +9,7 @@ type MePayload = {
   email: string;
   fullName: string | null;
   role: AppRole;
-  status: 'active' | 'pending_role';
+  status: 'active';
 };
 
 export const RequireRole = ({ allowed, children }: { allowed: AppRole[]; children: ReactNode }) => {

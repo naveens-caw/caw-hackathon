@@ -23,8 +23,8 @@ export const HomePage = () => {
         id: string;
         email: string;
         fullName: string | null;
-        role: 'unassigned' | 'employee' | 'manager' | 'hr';
-        status: 'active' | 'pending_role';
+        role: 'employee' | 'manager' | 'hr';
+        status: 'active';
       };
     },
   });

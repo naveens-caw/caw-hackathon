@@ -86,7 +86,7 @@ export class AuthService {
         throw new UnauthorizedException('Failed to sync local user.');
       }
 
-      const status: AuthStatus = user.role === 'unassigned' ? 'pending_role' : 'active';
+      const status: AuthStatus = 'active';
 
       return {
         id: user.id,

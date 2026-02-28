@@ -1,5 +1,5 @@
 DO $$ BEGIN
- CREATE TYPE "public"."app_role" AS ENUM('unassigned', 'employee', 'manager', 'hr');
+ CREATE TYPE "public"."app_role" AS ENUM('employee', 'manager', 'hr');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "users" (
   "clerk_user_id" text NOT NULL,
   "email" text NOT NULL,
   "full_name" text,
-  "role" "app_role" DEFAULT 'unassigned' NOT NULL,
+  "role" "app_role" DEFAULT 'employee' NOT NULL,
   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
   "updated_at" timestamp with time zone DEFAULT now() NOT NULL,
   CONSTRAINT "users_clerk_user_id_unique" UNIQUE("clerk_user_id"),
