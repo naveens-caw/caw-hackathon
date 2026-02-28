@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createJobRequestSchema,
+  hrDashboardSchema,
   applicationSchema,
   applicationStageEventSchema,
+  jobDetailsSchema,
+  jobListResponseSchema,
   jobSchema,
   meResponseSchema,
   versionResponseSchema,
@@ -85,5 +89,65 @@ describe('applicationStageEventSchema', () => {
     });
 
     expect(parsed.success).toBe(true);
+  });
+});
+
+describe('job list/details/dashboard schemas', () => {
+  it('parses list and details payloads', () => {
+    const baseJob = {
+      id: 2,
+      title: 'Frontend Engineer',
+      description: 'Build UI',
+      department: 'Engineering',
+      location: 'Remote',
+      employmentType: 'full_time',
+      status: 'open',
+      postedByUserId: 'seed_hr_1',
+      hiringManagerUserId: 'seed_manager_1',
+      openedAt: new Date().toISOString(),
+      closedAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    expect(jobListResponseSchema.safeParse({ jobs: [baseJob] }).success).toBe(true);
+    expect(
+      jobDetailsSchema.safeParse({
+        job: baseJob,
+        applicationCounts: {
+          applied: 1,
+          screening: 2,
+          interview: 0,
+          decision: 1,
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it('parses create request and dashboard payload', () => {
+    expect(
+      createJobRequestSchema.safeParse({
+        title: 'Backend Engineer',
+        description: 'Build APIs for the hiring system.',
+        department: 'Engineering',
+        location: 'Remote',
+        employmentType: 'full_time',
+        status: 'draft',
+        hiringManagerUserId: 'seed_manager_1',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      hrDashboardSchema.safeParse({
+        openPositions: 3,
+        totalApplications: 12,
+        stageDistribution: {
+          applied: 4,
+          screening: 3,
+          interview: 3,
+          decision: 2,
+        },
+      }).success,
+    ).toBe(true);
   });
 });

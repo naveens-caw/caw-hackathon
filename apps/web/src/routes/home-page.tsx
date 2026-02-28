@@ -2,6 +2,7 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { apiFetch } from '@/lib/api';
@@ -72,6 +73,18 @@ export const HomePage = () => {
             ? `${meQuery.data.email} | role=${meQuery.data.role} | status=${meQuery.data.status}`
             : 'loading...'}
         </p>
+        {meQuery.data ? (
+          <div className="mt-3 flex gap-3 text-sm">
+            <Link className="text-blue-600 underline" to="/jobs">
+              Browse Jobs
+            </Link>
+            {meQuery.data.role === 'hr' ? (
+              <Link className="text-blue-600 underline" to="/hr/dashboard">
+                HR Dashboard
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
         <SignedOut>
           <p className="mt-2 text-sm text-red-600">You are signed out. Please use /sign-in.</p>
         </SignedOut>

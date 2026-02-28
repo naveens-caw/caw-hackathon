@@ -5,6 +5,7 @@ import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
 import { DbModule } from './db.module.js';
 import { validateEnv } from './env.js';
+import { JobsModule } from './jobs/jobs.module.js';
 import { RbacDemoController } from './rbac-demo.controller.js';
 
 @Module({
@@ -15,6 +16,7 @@ import { RbacDemoController } from './rbac-demo.controller.js';
     }),
     DbModule,
     AuthModule,
+    JobsModule,
   ],
   controllers: [AppController, RbacDemoController],
   providers: [AppService],
