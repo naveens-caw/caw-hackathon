@@ -216,3 +216,7 @@ npx neonctl@latest --force-auth init --agent cursor
 connection string neon
 postgresql://neondb_owner:npg_gNV2pIhq9mOf@ep-fragrant-cake-ai07dxbu-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
+
+render deploy hook url  -- keep it private
+https://api.render.com/deploy/srv-d6h9dqhaae7s73bperv0?key=RHMMS-292v0
+
