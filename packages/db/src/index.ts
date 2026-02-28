@@ -22,4 +22,5 @@ export const getDb = (connectionString?: string) => {
 };
 
 export type DbClient = ReturnType<typeof getDb>;
+export * from './schema.js';
 export { schema };

@@ -6,6 +6,9 @@ const envSchema = z.object({
   PORT: z.coerce.number().optional(),
   API_PORT: z.coerce.number().default(3000),
   APP_VERSION: z.string().optional(),
+  WEB_ORIGIN: z.string().url().default('http://localhost:5173'),
+  CLERK_SECRET_KEY: z.string().min(1),
+  CLERK_PUBLISHABLE_KEY: z.string().min(1),
   DATABASE_URL: z.string().url(),
 });
 
