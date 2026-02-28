@@ -38,6 +38,6 @@ describe('HomePage', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByRole('heading', { name: /CAW Hackathon Bootstrap/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Internal Job Board/i })).toBeInTheDocument();
   });
 });
