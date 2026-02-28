@@ -14,6 +14,12 @@ if (!clerkPublishableKey) {
   throw new Error('VITE_CLERK_PUBLISHABLE_KEY is required.');
 }
 
+if (import.meta.env.PROD && clerkPublishableKey.startsWith('pk_test_')) {
+  throw new Error(
+    'Production build cannot use Clerk test keys. Set VITE_CLERK_PUBLISHABLE_KEY to pk_live_...',
+  );
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 const AuthTokenSync = () => {
   const { getToken } = useAuth();
