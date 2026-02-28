@@ -53,6 +53,7 @@ export class AuthService {
           clerkUserId,
           email: primaryEmail.toLowerCase(),
           fullName,
+          role: this.configService.get('DEFAULT_SIGNUP_ROLE', { infer: true }),
         })
         .onConflictDoUpdate({
           target: users.clerkUserId,
