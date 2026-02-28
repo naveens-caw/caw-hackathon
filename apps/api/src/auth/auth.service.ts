@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { DB } from '../db.module.js';
 import type { AppEnv } from '../env.js';
 import type { DbClient } from '@caw-hackathon/db';
@@ -70,6 +70,12 @@ export class AuthService {
             updatedAt: new Date(),
           },
         });
+
+      // Backward compatibility for records created before role-default changes.
+      await this.db
+        .update(users)
+        .set({ role: 'employee', updatedAt: new Date() })
+        .where(and(eq(users.clerkUserId, clerkUserId), sql`${users.role}::text = 'unassigned'`));
 
       const [user] = await this.db
         .select({
