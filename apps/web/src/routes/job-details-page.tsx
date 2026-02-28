@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { apiFetch } from '@/lib/api';
 import { deleteJob, getJobDetails } from '@/lib/jobs-api';
 
 export const JobDetailsPage = () => {
@@ -18,7 +19,18 @@ export const JobDetailsPage = () => {
     mutationFn: () => deleteJob(jobId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      navigate('/hr/jobs');
+      navigate('/jobs');
+    },
+  });
+
+  const meQuery = useQuery({
+    queryKey: ['auth-me'],
+    queryFn: async () => {
+      const response = await apiFetch('/api/auth/me');
+      if (!response.ok) {
+        throw new Error('Failed to fetch authenticated user');
+      }
+      return (await response.json()) as { role: 'unassigned' | 'employee' | 'manager' | 'hr' };
     },
   });
 
@@ -35,6 +47,8 @@ export const JobDetailsPage = () => {
   }
 
   const { job, applicationCounts } = jobQuery.data;
+  const isHr = meQuery.data?.role === 'hr';
+  const canManageApplications = meQuery.data?.role === 'hr' || meQuery.data?.role === 'manager';
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 p-6">
@@ -47,20 +61,29 @@ export const JobDetailsPage = () => {
           {job.location ? <p className="text-sm text-slate-600">{job.location}</p> : null}
         </div>
         <div className="flex items-center gap-3">
-          <Link className="text-sm text-blue-600 underline" to="/hr/jobs">
+          <Link className="text-sm text-blue-600 underline" to="/jobs">
             Back
           </Link>
-          <Link className="text-sm text-blue-600 underline" to={`/hr/jobs/${job.id}/edit`}>
-            Edit
-          </Link>
-          <button
-            className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-60"
-            disabled={deleteMutation.isPending || job.status !== 'draft'}
-            onClick={() => deleteMutation.mutate()}
-            type="button"
-          >
-            Delete Draft
-          </button>
+          {isHr ? (
+            <>
+              <Link className="text-sm text-blue-600 underline" to={`/hr/jobs/${job.id}/edit`}>
+                Edit
+              </Link>
+              <button
+                className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-60"
+                disabled={deleteMutation.isPending || job.status !== 'draft'}
+                onClick={() => deleteMutation.mutate()}
+                type="button"
+              >
+                Delete Draft
+              </button>
+            </>
+          ) : null}
+          {canManageApplications ? (
+            <Link className="text-sm text-blue-600 underline" to={`/jobs/${job.id}/applications`}>
+              Pipeline Board
+            </Link>
+          ) : null}
         </div>
       </header>
 

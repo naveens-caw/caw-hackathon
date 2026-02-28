@@ -78,6 +78,11 @@ export const HomePage = () => {
             <Link className="text-blue-600 underline" to="/jobs">
               Browse Jobs
             </Link>
+            {meQuery.data.role === 'employee' ? (
+              <Link className="text-blue-600 underline" to="/my-applications">
+                My Applications
+              </Link>
+            ) : null}
             {meQuery.data.role === 'hr' ? (
               <Link className="text-blue-600 underline" to="/hr/dashboard">
                 HR Dashboard

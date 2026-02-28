@@ -1,16 +1,27 @@
 import {
+  applicationSchema,
+  applyToJobRequestSchema,
+  jobApplicationsResponseSchema,
   createJobRequestSchema,
   hrDashboardSchema,
   jobDetailsSchema,
   jobListQuerySchema,
   jobListResponseSchema,
   jobSchema,
+  myApplicationsResponseSchema,
+  updateApplicationStageRequestSchema,
+  updateApplicationStageResponseSchema,
   updateJobRequestSchema,
+  type Application,
+  type ApplicationListItem,
+  type ApplicationStage,
   type CreateJobRequest,
   type HrDashboard,
   type Job,
   type JobDetails,
   type JobListQuery,
+  type MyApplication,
+  type UpdateApplicationStageResponse,
 } from '@caw-hackathon/shared';
 import { apiFetch } from './api';
 
@@ -20,6 +31,21 @@ const toSearchParams = (query: JobListQuery): string => {
   if (query.department) params.set('department', query.department);
   const serialized = params.toString();
   return serialized ? `?${serialized}` : '';
+};
+
+const extractApiErrorMessage = async (response: Response, fallback: string): Promise<string> => {
+  try {
+    const payload = (await response.json()) as { message?: string | string[] };
+    if (Array.isArray(payload.message)) {
+      return payload.message.join(', ');
+    }
+    if (payload.message) {
+      return payload.message;
+    }
+  } catch {
+    // no-op: keep fallback for non-json responses
+  }
+  return fallback;
 };
 
 export const listJobs = async (query: JobListQuery): Promise<Job[]> => {
@@ -85,4 +111,73 @@ export const getHrDashboard = async (): Promise<HrDashboard> => {
     throw new Error('Failed to fetch HR dashboard');
   }
   return hrDashboardSchema.parse(await response.json());
+};
+
+export const applyToJob = async (
+  id: number,
+  payload: { resumeUrl?: string | null; coverLetter?: string | null } = {},
+): Promise<Application> => {
+  const body = applyToJobRequestSchema.parse(payload);
+  const response = await apiFetch(`/api/jobs/${id}/apply`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Failed to apply to job'));
+  }
+
+  return applicationSchema.parse(await response.json());
+};
+
+export const listMyApplications = async (): Promise<MyApplication[]> => {
+  const response = await apiFetch('/api/applications/me');
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Failed to fetch my applications'));
+  }
+  return myApplicationsResponseSchema.parse(await response.json()).applications;
+};
+
+export const listJobApplications = async (jobId: number): Promise<ApplicationListItem[]> => {
+  const response = await apiFetch(`/api/jobs/${jobId}/applications`);
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Failed to fetch job applications'));
+  }
+  return jobApplicationsResponseSchema.parse(await response.json()).applications;
+};
+
+export const updateApplicationStage = async (
+  applicationId: number,
+  payload: {
+    toStage: ApplicationStage;
+    decision?: 'accepted' | 'rejected';
+    note?: string | null;
+  },
+): Promise<UpdateApplicationStageResponse> => {
+  const normalizedPayload = {
+    ...payload,
+    decision: payload.decision ?? undefined,
+  };
+
+  const body = updateApplicationStageRequestSchema.parse(normalizedPayload);
+  const response = await apiFetch(`/api/applications/${applicationId}/stage`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractApiErrorMessage(response, 'Failed to update application stage'));
+  }
+
+  return updateApplicationStageResponseSchema.parse(await response.json());
+};
+
+export const getNextStageOptions = (currentStage: ApplicationStage): ApplicationStage[] => {
+  const transitionMap: Record<ApplicationStage, ApplicationStage[]> = {
+    applied: ['screening'],
+    screening: ['interview', 'decision'],
+    interview: ['decision'],
+    decision: [],
+  };
+  return transitionMap[currentStage];
 };

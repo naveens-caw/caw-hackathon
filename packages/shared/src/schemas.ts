@@ -88,6 +88,66 @@ export const applicationSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+export const applyToJobRequestSchema = z.object({
+  resumeUrl: z.string().url().nullable().optional(),
+  coverLetter: z.string().trim().min(10).max(5000).nullable().optional(),
+});
+
+export const myApplicationJobSummarySchema = z.object({
+  id: z.number().int().positive(),
+  title: z.string(),
+  department: z.string(),
+  employmentType: employmentTypeSchema,
+  status: jobStatusSchema,
+  location: z.string().nullable(),
+});
+
+export const myApplicationSchema = applicationSchema.extend({
+  job: myApplicationJobSummarySchema,
+});
+
+export const myApplicationsResponseSchema = z.object({
+  applications: z.array(myApplicationSchema),
+});
+
+export const applicationListItemSchema = applicationSchema.extend({
+  applicant: z.object({
+    id: z.string(),
+    email: z.string().email(),
+    fullName: z.string().nullable(),
+  }),
+});
+
+export const jobApplicationsResponseSchema = z.object({
+  applications: z.array(applicationListItemSchema),
+});
+
+const decisionOutcomeSchema = z.enum(['accepted', 'rejected']);
+
+export const updateApplicationStageRequestSchema = z
+  .object({
+    toStage: applicationStageSchema,
+    decision: decisionOutcomeSchema.optional(),
+    note: z.string().trim().min(1).max(1000).nullable().optional(),
+  })
+  .superRefine((payload, ctx) => {
+    if (payload.toStage === 'decision' && !payload.decision) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['decision'],
+        message: 'decision is required when moving to decision stage.',
+      });
+    }
+
+    if (payload.toStage !== 'decision' && payload.decision) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['decision'],
+        message: 'decision can only be set for decision stage.',
+      });
+    }
+  });
+
 export const applicationStageEventSchema = z.object({
   id: z.number().int().positive(),
   applicationId: z.number().int().positive(),
@@ -96,6 +156,11 @@ export const applicationStageEventSchema = z.object({
   changedByUserId: z.string(),
   note: z.string().nullable(),
   createdAt: z.string().datetime(),
+});
+
+export const updateApplicationStageResponseSchema = z.object({
+  application: applicationSchema,
+  stageEvent: applicationStageEventSchema,
 });
 
 export type AppRole = z.infer<typeof appRoleSchema>;
@@ -113,4 +178,11 @@ export type JobDetails = z.infer<typeof jobDetailsSchema>;
 export type JobListResponse = z.infer<typeof jobListResponseSchema>;
 export type HrDashboard = z.infer<typeof hrDashboardSchema>;
 export type Application = z.infer<typeof applicationSchema>;
+export type ApplyToJobRequest = z.infer<typeof applyToJobRequestSchema>;
+export type MyApplication = z.infer<typeof myApplicationSchema>;
+export type MyApplicationsResponse = z.infer<typeof myApplicationsResponseSchema>;
+export type ApplicationListItem = z.infer<typeof applicationListItemSchema>;
+export type JobApplicationsResponse = z.infer<typeof jobApplicationsResponseSchema>;
+export type UpdateApplicationStageRequest = z.infer<typeof updateApplicationStageRequestSchema>;
+export type UpdateApplicationStageResponse = z.infer<typeof updateApplicationStageResponseSchema>;
 export type ApplicationStageEvent = z.infer<typeof applicationStageEventSchema>;

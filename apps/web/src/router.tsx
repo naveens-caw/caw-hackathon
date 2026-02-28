@@ -2,10 +2,12 @@ import { createBrowserRouter } from 'react-router-dom';
 import { RequireAuth } from './components/auth/require-auth';
 import { RequireRole } from './components/auth/require-role';
 import { HomePage } from './routes/home-page';
+import { JobApplicationsPage } from './routes/job-applications-page';
 import { HrDashboardPage } from './routes/hr-dashboard-page';
 import { JobDetailsPage } from './routes/job-details-page';
 import { JobFormPage } from './routes/job-form-page';
 import { JobsPage } from './routes/jobs-page';
+import { MyApplicationsPage } from './routes/my-applications-page';
 import { RbacDemoPage } from './routes/rbac-demo-page';
 import { SignInPage } from './routes/sign-in';
 import { SignUpPage } from './routes/sign-up';
@@ -43,6 +45,26 @@ export const router = createBrowserRouter([
       <RequireAuth>
         <RequireRole allowed={['hr', 'manager', 'employee']}>
           <JobDetailsPage />
+        </RequireRole>
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/jobs/:id/applications',
+    element: (
+      <RequireAuth>
+        <RequireRole allowed={['hr', 'manager']}>
+          <JobApplicationsPage />
+        </RequireRole>
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/my-applications',
+    element: (
+      <RequireAuth>
+        <RequireRole allowed={['employee']}>
+          <MyApplicationsPage />
         </RequireRole>
       </RequireAuth>
     ),

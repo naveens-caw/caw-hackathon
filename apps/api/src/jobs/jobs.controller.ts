@@ -1,6 +1,9 @@
 import {
+  applicationSchema,
+  applyToJobRequestSchema,
   createJobRequestSchema,
   jobDetailsSchema,
+  jobApplicationsResponseSchema,
   jobListQuerySchema,
   jobListResponseSchema,
   jobSchema,
@@ -78,5 +81,27 @@ export class JobsController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.jobsService.deleteJob(currentUser, id);
+  }
+
+  @Post(':id/apply')
+  @Roles('employee')
+  async apply(
+    @CurrentUser() currentUser: AuthenticatedUser,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: unknown,
+  ) {
+    const payload = applyToJobRequestSchema.parse(body);
+    const response = await this.jobsService.applyToJob(currentUser, id, payload);
+    return applicationSchema.parse(response);
+  }
+
+  @Get(':id/applications')
+  @Roles('hr', 'manager')
+  async listApplications(
+    @CurrentUser() currentUser: AuthenticatedUser,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const response = await this.jobsService.listJobApplications(currentUser, id);
+    return jobApplicationsResponseSchema.parse(response);
   }
 }

@@ -1,13 +1,14 @@
 import { meResponseSchema, type JobStatus } from '@caw-hackathon/shared';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from '@/lib/api';
-import { listJobs } from '@/lib/jobs-api';
+import { applyToJob, listJobs, listMyApplications } from '@/lib/jobs-api';
 
 const statusOptions: Array<JobStatus | 'all'> = ['all', 'draft', 'open', 'closed'];
 
 export const JobsPage = () => {
+  const queryClient = useQueryClient();
   const [status, setStatus] = useState<JobStatus | 'all'>('all');
   const [department, setDepartment] = useState('');
 
@@ -35,6 +36,24 @@ export const JobsPage = () => {
     },
   });
   const isHr = meQuery.data?.role === 'hr';
+  const isEmployee = meQuery.data?.role === 'employee';
+  const isManager = meQuery.data?.role === 'manager';
+
+  const myApplicationsQuery = useQuery({
+    queryKey: ['my-applications'],
+    queryFn: () => listMyApplications(),
+    enabled: isEmployee,
+  });
+
+  const appliedJobIds = new Set((myApplicationsQuery.data ?? []).map((item) => item.job.id));
+
+  const applyMutation = useMutation({
+    mutationFn: (jobId: number) => applyToJob(jobId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-applications'] });
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    },
+  });
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 p-6">
@@ -50,6 +69,11 @@ export const JobsPage = () => {
                 Create Job
               </Link>
             </>
+          ) : null}
+          {isEmployee ? (
+            <Link className="text-sm text-blue-600 underline" to="/my-applications">
+              My Applications
+            </Link>
           ) : null}
         </div>
       </header>
@@ -104,10 +128,30 @@ export const JobsPage = () => {
                   Edit
                 </Link>
               ) : null}
+              {isHr || isManager ? (
+                <Link className="text-blue-600 underline" to={`/jobs/${job.id}/applications`}>
+                  Applications
+                </Link>
+              ) : null}
+              {isEmployee ? (
+                <button
+                  className="rounded border border-slate-300 px-3 py-1 text-xs disabled:opacity-60"
+                  disabled={
+                    applyMutation.isPending || job.status !== 'open' || appliedJobIds.has(job.id)
+                  }
+                  onClick={() => applyMutation.mutate(job.id)}
+                  type="button"
+                >
+                  {appliedJobIds.has(job.id) ? 'Applied' : 'Apply'}
+                </button>
+              ) : null}
             </div>
           </article>
         ))}
       </section>
+      {applyMutation.isError ? (
+        <p className="text-sm text-red-600">{(applyMutation.error as Error).message}</p>
+      ) : null}
     </main>
   );
 };

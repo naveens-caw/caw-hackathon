@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyToJobRequestSchema,
   createJobRequestSchema,
   hrDashboardSchema,
   applicationSchema,
   applicationStageEventSchema,
+  jobApplicationsResponseSchema,
   jobDetailsSchema,
   jobListResponseSchema,
   jobSchema,
   meResponseSchema,
+  myApplicationsResponseSchema,
+  updateApplicationStageRequestSchema,
   versionResponseSchema,
 } from './schemas';
 
@@ -149,5 +153,78 @@ describe('job list/details/dashboard schemas', () => {
         },
       }).success,
     ).toBe(true);
+  });
+});
+
+describe('application flow schemas', () => {
+  it('parses apply and list payloads', () => {
+    expect(
+      applyToJobRequestSchema.safeParse({
+        resumeUrl: 'https://example.com/resume.pdf',
+        coverLetter: 'I am excited to apply for this role.',
+      }).success,
+    ).toBe(true);
+
+    expect(
+      myApplicationsResponseSchema.safeParse({
+        applications: [
+          {
+            id: 1,
+            jobId: 2,
+            applicantUserId: 'seed_employee_1',
+            resumeUrl: null,
+            coverLetter: null,
+            stage: 'applied',
+            decision: 'pending',
+            appliedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            job: {
+              id: 2,
+              title: 'Frontend Engineer',
+              department: 'Engineering',
+              employmentType: 'full_time',
+              status: 'open',
+              location: 'Remote',
+            },
+          },
+        ],
+      }).success,
+    ).toBe(true);
+
+    expect(
+      jobApplicationsResponseSchema.safeParse({
+        applications: [
+          {
+            id: 1,
+            jobId: 2,
+            applicantUserId: 'seed_employee_1',
+            resumeUrl: null,
+            coverLetter: null,
+            stage: 'screening',
+            decision: 'pending',
+            appliedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            applicant: {
+              id: 'seed_employee_1',
+              email: 'employee@example.com',
+              fullName: 'Employee One',
+            },
+          },
+        ],
+      }).success,
+    ).toBe(true);
+  });
+
+  it('requires decision when moving to decision stage', () => {
+    const missingDecision = updateApplicationStageRequestSchema.safeParse({
+      toStage: 'decision',
+    });
+    expect(missingDecision.success).toBe(false);
+
+    const invalidDecisionUse = updateApplicationStageRequestSchema.safeParse({
+      toStage: 'screening',
+      decision: 'accepted',
+    });
+    expect(invalidDecisionUse.success).toBe(false);
   });
 });
