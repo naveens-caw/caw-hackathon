@@ -38,6 +38,12 @@ Optional later:
 - staging web project
 
 4. In each Vercel project, set `VITE_API_URL` to the matching API URL.
+5. Create Clerk application and copy keys for both environments:
+
+- `CLERK_SECRET_KEY` (API private key)
+- `CLERK_PUBLISHABLE_KEY` (API-side reference key)
+- `VITE_CLERK_PUBLISHABLE_KEY` (web public key)
+
 5. In GitHub repository settings, create environments:
 
 - `staging`
@@ -53,6 +59,9 @@ Set these secrets in `production` first. Add `staging` values later when enablin
 - `VERCEL_TOKEN`: Vercel token with deploy permissions
 - `VERCEL_ORG_ID`: Vercel org ID
 - `VERCEL_PROJECT_ID`: Vercel project ID (staging/prod project per environment)
+- `CLERK_SECRET_KEY`: Clerk backend secret for API auth verification
+- `CLERK_PUBLISHABLE_KEY`: Clerk publishable key for API config parity
+- `VITE_CLERK_PUBLISHABLE_KEY`: Clerk publishable key for web runtime
 
 ## Render env vars
 
@@ -62,6 +71,9 @@ Set these on Render production service:
 - `APP_ENV=production`
 - `APP_VERSION` (optional default; workflow/commit can override later)
 - `DATABASE_URL` (Neon staging/prod URL)
+- `WEB_ORIGIN` (web app origin for CORS, for example `https://app.example.com`)
+- `CLERK_SECRET_KEY`
+- `CLERK_PUBLISHABLE_KEY`
 
 Render provides `PORT` automatically. API bootstrap supports this for runtime binding.
 

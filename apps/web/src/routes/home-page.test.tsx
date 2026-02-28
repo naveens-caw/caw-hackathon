@@ -2,6 +2,33 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { HomePage } from './home-page';
+import { vi } from 'vitest';
+
+vi.mock('@clerk/clerk-react', () => ({
+  SignedIn: ({ children }: { children: unknown }) => <>{children}</>,
+  SignedOut: ({ children }: { children: unknown }) => <>{children}</>,
+  UserButton: () => <div>UserButton</div>,
+}));
+
+vi.mock('@/lib/api', () => ({
+  apiFetch: async (path: string) => {
+    if (path === '/api/version') {
+      return new Response(JSON.stringify({ version: '0.1.0', env: 'development' }), {
+        status: 200,
+      });
+    }
+    return new Response(
+      JSON.stringify({
+        id: 'user_123',
+        email: 'user@example.com',
+        fullName: 'Demo User',
+        role: 'employee',
+        status: 'active',
+      }),
+      { status: 200 },
+    );
+  },
+}));
 
 describe('HomePage', () => {
   it('renders title', () => {
@@ -11,6 +38,6 @@ describe('HomePage', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByText('CAW Hackathon Bootstrap')).toBeInTheDocument();
+    expect(screen.getByText('Internal Job Board: Auth + RBAC')).toBeInTheDocument();
   });
 });

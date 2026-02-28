@@ -7,6 +7,9 @@ Use this file to capture your real deployment values and finish launch in one pa
 - [ ] `PROD_WEB_URL`: `https://________________.vercel.app`
 - [ ] `PROD_API_URL`: `https://________________.onrender.com`
 - [ ] `NEON_PROD_DATABASE_URL`: `postgres://...sslmode=require`
+- [ ] `CLERK_SECRET_KEY`: `sk_live_...`
+- [ ] `CLERK_PUBLISHABLE_KEY`: `pk_live_...`
+- [ ] `VITE_CLERK_PUBLISHABLE_KEY`: `pk_live_...`
 - [ ] `VERCEL_ORG_ID`: `________________`
 - [ ] `VERCEL_PROJECT_ID`: `________________`
 - [ ] `RENDER_DEPLOY_HOOK_URL`: `https://api.render.com/deploy/...`
@@ -25,6 +28,9 @@ Use this file to capture your real deployment values and finish launch in one pa
   - [ ] `NODE_ENV=production`
   - [ ] `APP_ENV=production`
   - [ ] `DATABASE_URL=<NEON_PROD_DATABASE_URL>`
+  - [ ] `WEB_ORIGIN=<PROD_WEB_URL>`
+  - [ ] `CLERK_SECRET_KEY=<CLERK_SECRET_KEY>`
+  - [ ] `CLERK_PUBLISHABLE_KEY=<CLERK_PUBLISHABLE_KEY>`
   - [ ] `APP_VERSION` (optional)
 - [ ] Confirm API opens:
   - [ ] `GET /health`
@@ -36,6 +42,7 @@ Use this file to capture your real deployment values and finish launch in one pa
 - [ ] Create Vercel project with root at `apps/web`.
 - [ ] Set env var:
   - [ ] `VITE_API_URL=<PROD_API_URL>`
+  - [ ] `VITE_CLERK_PUBLISHABLE_KEY=<VITE_CLERK_PUBLISHABLE_KEY>`
 - [ ] Trigger deploy and confirm web URL loads.
 
 ## 5) GitHub Environment Secrets (`production`)

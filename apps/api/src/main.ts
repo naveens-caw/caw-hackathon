@@ -6,9 +6,13 @@ import type { AppEnv } from './env.js';
 
 const bootstrap = async (): Promise<void> => {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
 
   const config = app.get(ConfigService<AppEnv, true>);
+  app.enableCors({
+    origin: config.get('WEB_ORIGIN', { infer: true }),
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   const fallbackPort = config.get('API_PORT', { infer: true });
   const port = Number(process.env.PORT ?? fallbackPort);
 
