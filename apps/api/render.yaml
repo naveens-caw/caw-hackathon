@@ -3,7 +3,7 @@ services:
     name: caw-hackathon-api
     runtime: node
     rootDir: ../..
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter api build
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
     startCommand: pnpm --filter api start
     healthCheckPath: /health
     envVars:

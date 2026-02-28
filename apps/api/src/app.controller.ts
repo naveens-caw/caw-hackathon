@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { versionResponseSchema } from '@caw-hackathon/shared';
-import { AppService } from './app.service';
+import { AppService } from './app.service.js';
 
 @Controller()
 export class AppController {

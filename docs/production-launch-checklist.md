@@ -51,7 +51,7 @@ Go to repo settings -> Environments -> `production` -> Secrets, then set:
 
 ## 6) Release and Verify
 
-- [ ] Merge/push deployment code to `main`.
+- [ ] Merge/push deployment code to `develop`.
 - [ ] Confirm `CI` workflow succeeds.
 - [ ] Confirm `Deploy Production` workflow succeeds.
 - [ ] Confirm smoke checks pass in workflow:

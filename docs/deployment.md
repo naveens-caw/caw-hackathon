@@ -67,8 +67,8 @@ Render provides `PORT` automatically. API bootstrap supports this for runtime bi
 
 ## Branch and workflow behavior
 
-- `main` -> `Deploy Production` (after `CI` succeeds + production environment protection rules)
-- `develop` -> `Deploy Staging` (optional follow-up when staging is enabled)
+- `develop` -> `Deploy Production` (after `CI` succeeds + production environment protection rules)
+- `staging` -> `Deploy Staging` (optional follow-up when staging is enabled)
 
 CI checks live in `.github/workflows/ci.yml` and must pass before deploy workflows run.
 

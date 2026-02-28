@@ -34,8 +34,8 @@ pnpm dev
 
 This repo ships with staging + production deployment workflows:
 
-- `.github/workflows/deploy-staging.yml` (auto from `develop` after CI passes)
-- `.github/workflows/deploy-production.yml` (from `main` after CI passes + environment protection)
+- `.github/workflows/deploy-staging.yml` (auto from `staging` after CI passes)
+- `.github/workflows/deploy-production.yml` (from `develop` after CI passes + environment protection)
 
 Required platform setup:
 

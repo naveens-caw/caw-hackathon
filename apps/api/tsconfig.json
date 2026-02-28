@@ -2,8 +2,8 @@
   "extends": "@caw-hackathon/tsconfig/node.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,
