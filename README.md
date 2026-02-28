@@ -39,7 +39,7 @@ This repo ships with staging + production deployment workflows:
 
 Required platform setup:
 
-- Web: Vercel (`apps/web/vercel.json`)
+- Web: Vercel (`vercel.json`)
 - API: Render (`apps/api/render.yaml`)
 - Database: Neon (separate staging/prod URLs)
 
