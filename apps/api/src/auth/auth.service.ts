@@ -1,6 +1,12 @@
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { users } from '@caw-hackathon/db';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
 import { DB } from '../db.module.js';
@@ -12,6 +18,7 @@ import type { AuthStatus, AuthenticatedUser } from './auth.types.js';
 @Injectable()
 export class AuthService {
   private readonly clerkClient;
+  private readonly logger = new Logger(AuthService.name);
 
   constructor(
     private readonly configService: ConfigService<AppEnv, true>,
@@ -88,8 +95,13 @@ export class AuthService {
         role: user.role as AppRole,
         status,
       };
-    } catch {
-      throw new UnauthorizedException('Failed to authenticate request.');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      this.logger.error('Unexpected authentication failure', error as Error);
+      throw new InternalServerErrorException('Authentication service failed.');
     }
   }
 
