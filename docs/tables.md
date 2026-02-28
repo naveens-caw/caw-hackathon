@@ -3,6 +3,7 @@
 ## Scope
 
 - Existing table reused: `users`
+- Legacy bootstrap table removed in Step 4: `hackathon_projects`
 - New primary entities:
 - `jobs`
 - `applications`
@@ -111,6 +112,11 @@ Disallowed transitions:
 - Migration 3: `application_stage_events`
 
 ## Seed Plan (Dev Data)
+
+Seeding behavior:
+
+- Reset-safe for job board entities (`jobs`, `applications`, `application_stage_events` are cleared first).
+- Seed users are deterministic with `seed_*` IDs and are upsert-safe for repeated runs.
 
 - Users:
 - 1 HR

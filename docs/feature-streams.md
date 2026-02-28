@@ -14,6 +14,13 @@ Complete these before parallel work:
 
 Merge checkpoint: foundation must be merged and green before splitting streams.
 
+Status:
+
+- Step 4 foundation complete in `develop`:
+  - DB enums/tables/migrations added for jobs, applications, and stage events
+  - dev seed script added (`pnpm db:seed`)
+  - shared schemas for core entities added in `packages/shared`
+
 ## Stream Split (Vertical Slices)
 
 - Engineer 1: Job Posting + HR Dashboard

@@ -19,6 +19,7 @@
     "test:e2e": "turbo run test:e2e",
     "db:generate": "pnpm --filter @caw-hackathon/db drizzle:generate",
     "db:migrate": "pnpm --filter @caw-hackathon/db drizzle:migrate",
+    "db:seed": "pnpm --filter @caw-hackathon/db db:seed",
     "prepare": "husky"
   },
   "devDependencies": {
