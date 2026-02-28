@@ -2,6 +2,7 @@ import type { ApplicationStage } from '@caw-hackathon/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { TopNav } from '@/components/layout/top-nav';
 import {
   getNextStageOptions,
   getJobDetails,
@@ -83,6 +84,7 @@ export const JobApplicationsPage = () => {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 p-6">
+      <TopNav />
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Pipeline Board</h1>

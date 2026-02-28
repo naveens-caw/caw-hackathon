@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from '@/lib/api';
+import { TopNav } from '@/components/layout/top-nav';
 import { applyToJob, listJobs, listMyApplications } from '@/lib/jobs-api';
 
 const statusOptions: Array<JobStatus | 'all'> = ['all', 'draft', 'open', 'closed'];
@@ -57,6 +58,7 @@ export const JobsPage = () => {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 p-6">
+      <TopNav />
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Jobs</h1>
         <div className="flex items-center gap-3">

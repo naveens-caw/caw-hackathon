@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiFetch } from '@/lib/api';
+import { TopNav } from '@/components/layout/top-nav';
 import { deleteJob, getJobDetails } from '@/lib/jobs-api';
 
 export const JobDetailsPage = () => {
@@ -52,6 +53,7 @@ export const JobDetailsPage = () => {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 p-6">
+      <TopNav />
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">{job.title}</h1>

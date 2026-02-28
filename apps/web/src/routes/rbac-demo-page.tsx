@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
+import { TopNav } from '@/components/layout/top-nav';
 
 const fetchProtected = async (
   path: '/api/rbac-demo/hr' | '/api/rbac-demo/manager' | '/api/rbac-demo/employee',
@@ -27,6 +28,7 @@ export const RbacDemoPage = () => {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-6">
+      <TopNav />
       <h1 className="text-2xl font-semibold">RBAC Demo</h1>
       <p className="text-sm text-slate-600">Each call succeeds only for the matching role.</p>
       <pre className="rounded-md border bg-slate-50 p-3 text-sm">

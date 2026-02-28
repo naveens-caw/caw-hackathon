@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { TopNav } from '@/components/layout/top-nav';
 import { createJob, getJobDetails, updateJob } from '@/lib/jobs-api';
 
 const employmentOptions = employmentTypeSchema.options;
@@ -128,6 +129,7 @@ export const JobFormPage = () => {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 p-6">
+      <TopNav />
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">{title}</h1>
         <Link className="text-sm text-blue-600 underline" to="/hr/jobs">

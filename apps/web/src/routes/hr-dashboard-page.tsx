@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { TopNav } from '@/components/layout/top-nav';
 import { getHrDashboard } from '@/lib/jobs-api';
 
 export const HrDashboardPage = () => {
@@ -20,6 +21,7 @@ export const HrDashboardPage = () => {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 p-6">
+      <TopNav />
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">HR Dashboard</h1>
         <Link className="text-sm text-blue-600 underline" to="/hr/jobs">
