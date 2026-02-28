@@ -87,7 +87,7 @@ export class AuthService {
         role: user.role as AppRole,
         status,
       };
-    } catch (_error) {
+    } catch {
       throw new UnauthorizedException('Failed to authenticate request.');
     }
   }

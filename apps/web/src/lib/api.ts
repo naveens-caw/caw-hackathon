@@ -3,7 +3,10 @@ import { getAccessToken } from './auth';
 const API_URL =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3000' : '');
 
-export const apiFetch = async (path: string, init: RequestInit = {}): Promise<Response> => {
+export const apiFetch = async (
+  path: string,
+  init: Parameters<typeof fetch>[1] = {},
+): Promise<Response> => {
   const token = await getAccessToken();
   const headers = new Headers(init.headers);
 

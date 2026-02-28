@@ -14,11 +14,6 @@ const config: Config = {
   },
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-    '^@caw-hackathon/shared$': '<rootDir>/../../../packages/shared/src/index.ts',
-    '^@caw-hackathon/db$': '<rootDir>/../../../packages/db/src/index.ts',
-  },
 };
 
 export default config;

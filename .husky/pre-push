@@ -1,2 +1,2 @@
 #!/bin/sh
-pnpm ci:local
+echo "pre-push: skipping ci:local (runs in pre-commit)"

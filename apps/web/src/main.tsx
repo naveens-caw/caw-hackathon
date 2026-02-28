@@ -14,6 +14,7 @@ if (!clerkPublishableKey) {
   throw new Error('VITE_CLERK_PUBLISHABLE_KEY is required.');
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 const AuthTokenSync = () => {
   const { getToken } = useAuth();
 
