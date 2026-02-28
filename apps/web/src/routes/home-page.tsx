@@ -39,7 +39,7 @@ export const HomePage = () => {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 p-6">
       <section className="rounded-lg border bg-white p-4">
-        <h1 className="text-2xl font-semibold">CAW Hackathon Bootstrap</h1>
+        <h1 className="text-2xl font-semibold">CAW Hackathon Bootstrap testing develop branch</h1>
         <p className="mt-2 text-sm text-slate-600">
           API: {versionQuery.data ? `${versionQuery.data.version} (${versionQuery.data.env})` : 'loading...'}
         </p>
