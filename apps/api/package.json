@@ -9,7 +9,7 @@
     "start": "node dist/main.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests --runInBand"
   },
   "dependencies": {
     "@caw-hackathon/db": "workspace:*",

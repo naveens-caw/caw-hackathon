@@ -11,6 +11,6 @@ describe('HomePage', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByText('CAW Hackathon Bootstrap')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /CAW Hackathon Bootstrap/i })).toBeInTheDocument();
   });
 });
